@@ -10,4 +10,5 @@ edition = "2018"
 unstable = []
 
 [dependencies]
-
+regex = "1"
+lazy_static = "1"
