@@ -1,4 +1,5 @@
 use day01;
+use day02;
 use std::fmt::Display;
 
 fn solve_day<A, B, S>(day: usize, solver: S) where
@@ -11,5 +12,6 @@ fn solve_day<A, B, S>(day: usize, solver: S) where
 }
 
 fn main() {
-    solve_day(01, day01::solve)
+    solve_day(01, day01::solve);
+    solve_day(02, day02::solve);
 }

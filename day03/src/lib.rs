@@ -12,6 +12,7 @@ mod tests {
 
     const SAMPLE_01: &'static str = include_str!("../sample01");
 
+
     #[test]
     fn part_1_sample_input() {
         assert_eq!(0, 1);
@@ -30,7 +31,7 @@ mod tests {
         use test::Bencher;
 
         #[bench]
-        fn d02p1_brute_force(b: &mut Bencher) {
+        fn d03p1_brute_force(b: &mut Bencher) {
             b.iter(|| {
 
             });
