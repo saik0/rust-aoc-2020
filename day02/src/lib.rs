@@ -11,22 +11,22 @@ lazy_static! {
 }
 
 #[derive(Debug)]
-struct PasswordDbEntry {
+struct PasswordDbEntry<'a> {
     low: usize,
     high: usize,
     char: char,
-    password: String,
+    password: &'a str,
 }
 
-impl PasswordDbEntry {
-    fn parse(line: &str) -> PasswordDbEntry {
+impl <'a> PasswordDbEntry<'a> {
+    fn parse(line: &'a str) -> PasswordDbEntry<'a> {
         let captures = PASSWORD_REGEX.captures(line).expect("invalid password line");
-
+        
         PasswordDbEntry {
             low: captures[1].parse().unwrap(),
             high: captures[2].parse().unwrap(),
             char: captures[3].parse().unwrap(),
-            password: captures[4].to_owned(),
+            password: captures.get(4).unwrap().as_str(),
         }
     }
 
@@ -86,11 +86,11 @@ mod tests {
 
     #[test]
     fn part_1_sample_input() {
-        let entries: Vec<PasswordDbEntry> = SAMPLE_01.lines().map(PasswordDbEntry::parse).collect();
+        let mut entries = SAMPLE_01.lines().map(PasswordDbEntry::parse);
 
-        assert_eq!(entries[0].is_part_1_valid(), true);
-        assert_eq!(entries[1].is_part_1_valid(), false);
-        assert_eq!(entries[2].is_part_1_valid(), true);
+        assert_eq!(entries.next().unwrap().is_part_1_valid(), true);
+        assert_eq!(entries.next().unwrap().is_part_1_valid(), false);
+        assert_eq!(entries.next().unwrap().is_part_1_valid(), true);
     }
 
     #[test]
@@ -100,13 +100,11 @@ mod tests {
 
     #[test]
     fn part_2_sample_input() {
-        let entries: Vec<PasswordDbEntry> = SAMPLE_01.lines().map(PasswordDbEntry::parse).collect();
+        let mut entries = SAMPLE_01.lines().map(PasswordDbEntry::parse);
 
-        println!("{:#?}", entries);
-
-        assert_eq!(entries[0].is_part_2_valid(), true);
-        assert_eq!(entries[1].is_part_2_valid(), false);
-        assert_eq!(entries[2].is_part_2_valid(), false);
+        assert_eq!(entries.next().unwrap().is_part_2_valid(), true);
+        assert_eq!(entries.next().unwrap().is_part_2_valid(), false);
+        assert_eq!(entries.next().unwrap().is_part_2_valid(), false);
     }
 
     #[test]
