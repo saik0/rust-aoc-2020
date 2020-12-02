@@ -12,15 +12,13 @@ struct PasswordDbEntry<'a> {
 
 impl <'a> PasswordDbEntry<'a> {
     fn parse(line: &'a str) -> PasswordDbEntry<'a> {
-        let low_end = line.find('-').unwrap();
-        let high_start = low_end+1;
-        let high_end = high_start + line[high_start..].find(' ').unwrap();
+        let mut split = line.split(&[' ', '-', ':'][..]);
 
         PasswordDbEntry {
-            low: line[..low_end].parse().unwrap(),
-            high: line[high_start..high_end].parse().unwrap(),
-            char: line[high_end+1..high_end+2].parse().unwrap(),
-            password: &line[high_end+4..],
+            low: split.next().unwrap().parse().unwrap(),
+            high: split.next().unwrap().parse().unwrap(),
+            char: split.next().unwrap().parse().unwrap(),
+            password: { split.next(); split.next().unwrap() },
         }
     }
 
