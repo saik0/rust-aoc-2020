@@ -1,14 +1,6 @@
 #![cfg_attr(feature = "unstable", feature(test))]
 
-use lazy_static::lazy_static;
-use regex::Regex;
-
 const INPUT: &'static str = include_str!("../input");
-const PASSWORD_PATTERN: &'static str = r"(\d+)-(\d+) ([a-z]): ([a-z]+)";
-
-lazy_static! {
-    static ref PASSWORD_REGEX: Regex = Regex::new(PASSWORD_PATTERN).unwrap();
-}
 
 #[derive(Debug)]
 struct PasswordDbEntry<'a> {
@@ -20,13 +12,15 @@ struct PasswordDbEntry<'a> {
 
 impl <'a> PasswordDbEntry<'a> {
     fn parse(line: &'a str) -> PasswordDbEntry<'a> {
-        let captures = PASSWORD_REGEX.captures(line).expect("invalid password line");
-        
+        let low_end = line.find('-').unwrap();
+        let high_start = low_end+1;
+        let high_end = high_start + line[high_start..].find(' ').unwrap();
+
         PasswordDbEntry {
-            low: captures[1].parse().unwrap(),
-            high: captures[2].parse().unwrap(),
-            char: captures[3].parse().unwrap(),
-            password: captures.get(4).unwrap().as_str(),
+            low: line[..low_end].parse().unwrap(),
+            high: line[high_start..high_end].parse().unwrap(),
+            char: line[high_end+1..high_end+2].parse().unwrap(),
+            password: &line[high_end+4..],
         }
     }
 
