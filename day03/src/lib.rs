@@ -1,39 +1,40 @@
 #![cfg_attr(feature = "unstable", feature(test))]
 
 const INPUT: &'static str = include_str!("../input");
+const TREE: u8 = '#' as u8;
 
-pub fn solve() -> (usize, usize) {
-    (solve_part_1(INPUT), solve_part_2(INPUT))
-}
+fn count_trees(input: &str, right: usize, down: usize) -> usize {
+    let lines: Box<[&[u8]]> = input.lines().map(str::as_bytes).collect();
+    let width = lines[0].len();
+    let height = lines.len();
 
-fn solution(input: &str, r: usize, d: usize) -> usize {
-    let w = input.lines().nth(0).unwrap().len();
-    let h = input.lines().count();
-
-    let mut x = r;
-    let mut y = d;
+    let mut x = right;
+    let mut y = down;
     let mut trees = 0;
-    while y < h {
-        let c = input.lines().nth(y).unwrap().chars().nth(x).unwrap();
-        trees += (c == '#') as usize;
-        x += r;
-        x %= w;
-        y += d;
+    while y < height {
+        trees += (lines[y][x] == TREE) as usize;
+        y += down;
+        x += right;
+        x %= width;
     }
 
     trees
 }
 
 fn solve_part_1(input: &str) -> usize {
-    solution(input, 3, 1)
+    count_trees(input, 3, 1)
 }
 
 fn solve_part_2(input: &str) -> usize {
-    solution(input, 1, 1) *
-        solution(input, 3, 1) *
-        solution(input, 5, 1) *
-        solution(input, 7, 1) *
-        solution(input, 1, 2)
+    count_trees(input, 1, 1) *
+        count_trees(input, 3, 1) *
+        count_trees(input, 5, 1) *
+        count_trees(input, 7, 1) *
+        count_trees(input, 1, 2)
+}
+
+pub fn solve() -> (usize, usize) {
+    (solve_part_1(INPUT), solve_part_2(INPUT))
 }
 
 // ============================================================================================== //
@@ -77,8 +78,17 @@ mod tests {
         use test::Bencher;
 
         #[bench]
-        fn d03p1_brute_force(b: &mut Bencher) {
-            b.iter(|| {});
+        fn d03p1(b: &mut Bencher) {
+            b.iter(|| {
+                solve_part_1(INPUT);
+            });
+        }
+
+        #[bench]
+        fn d03p2(b: &mut Bencher) {
+            b.iter(|| {
+                solve_part_2(INPUT);
+            });
         }
     }
 }
