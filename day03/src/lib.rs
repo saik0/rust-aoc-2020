@@ -1,44 +1,71 @@
 #![cfg_attr(feature = "unstable", feature(test))]
 
+use crate::forest::Forest;
+
 const INPUT: &'static str = include_str!("../input");
-const TREE: u8 = '#' as u8;
 
-fn parse_lines(input: &str) -> Vec<&[u8]> {
-    input.lines().map(str::as_bytes).collect()
-}
+mod forest {
+    const TREE: u8 = '#' as u8;
 
-fn count_trees(lines: &[&[u8]], right: usize, down: usize) -> usize {
-    let width = lines[0].len();
-    let height = lines.len();
+    pub struct Forest<'a>(Vec<&'a[u8]>);
 
-    let mut x = right;
-    let mut y = down;
-    let mut trees = 0;
-    while y < height {
-        trees += (lines[y][x] == TREE) as usize;
-        y += down;
-        x += right;
-        x %= width;
+    impl <'a> Forest<'a> {
+        pub fn parse(input: &str) -> Forest {
+            Forest(input.lines().map(str::as_bytes).collect())
+        }
+
+        pub fn width(&self) -> usize {
+            self.0[0].len()
+        }
+
+        pub fn height(&self) -> usize {
+            self.0.len()
+        }
+
+        pub fn has_tree(&self, x: usize, y: usize) -> bool {
+            self.0[y][x] == TREE
+        }
     }
-
-    trees
 }
 
-fn solve_part_1(lines: &[&[u8]]) -> usize {
-    count_trees(lines, 3, 1)
+trait TreeCounter {
+    fn count_trees(&self, right: usize, down: usize) -> usize;
 }
 
-fn solve_part_2(lines: &[&[u8]]) -> usize {
-    count_trees(lines, 1, 1) *
-        count_trees(lines, 3, 1) *
-        count_trees(lines, 5, 1) *
-        count_trees(lines, 7, 1) *
-        count_trees(lines, 1, 2)
+impl <'a> TreeCounter for Forest<'a> {
+    fn count_trees(&self, right: usize, down: usize) -> usize {
+        let width = self.width();
+        let height = self.height();
+
+        let mut x = right;
+        let mut y = down;
+        let mut trees = 0;
+        while y < height {
+            trees += self.has_tree(x, y) as usize;
+            y += down;
+            x += right;
+            x %= width;
+        }
+
+        trees
+    }
+}
+
+fn solve_part_1(forest: &Forest) -> usize {
+    forest.count_trees(3, 1)
+}
+
+fn solve_part_2(forest: &Forest) -> usize {
+    forest.count_trees(1, 1) *
+        forest.count_trees(3, 1) *
+        forest.count_trees(5, 1) *
+        forest.count_trees(7, 1) *
+        forest.count_trees(1, 2)
 }
 
 pub fn solve() -> (usize, usize) {
-    let lines = &parse_lines(INPUT);
-    (solve_part_1(lines), solve_part_2(lines))
+    let forest = &Forest::parse(INPUT);
+    (solve_part_1(forest), solve_part_2(forest))
 }
 
 // ============================================================================================== //
@@ -50,13 +77,13 @@ mod tests {
     const SAMPLE_01: &'static str = include_str!("../sample01");
 
     fn parse_solve_part_1(input: &str) -> usize {
-        let lines = &parse_lines(input);
-        solve_part_1(lines)
+        let forest = &Forest::parse(input);
+        solve_part_1(forest)
     }
 
     fn parse_solve_part_2(input: &str) -> usize {
-        let lines = &parse_lines(input);
-        solve_part_2(lines)
+        let forest = &Forest::parse(input);
+        solve_part_2(forest)
     }
 
     #[test]
