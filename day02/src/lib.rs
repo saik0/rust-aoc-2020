@@ -11,15 +11,17 @@ struct PasswordDbEntry<'a> {
 }
 
 impl <'a> PasswordDbEntry<'a> {
-    fn parse(line: &'a str) -> PasswordDbEntry<'a> {
+    fn parse(line: &'a str) -> Option<PasswordDbEntry<'a>> {
         let mut split = line.split(&[' ', '-', ':'][..]);
 
-        PasswordDbEntry {
-            low: split.next().unwrap().parse().unwrap(),
-            high: split.next().unwrap().parse().unwrap(),
-            char: split.next().unwrap().parse().unwrap(),
-            password: { split.next(); split.next().unwrap() },
-        }
+        Some(
+            PasswordDbEntry {
+                low: split.next()?.parse().ok()?,
+                high: split.next()?.parse().ok()?,
+                char: split.next()?.parse().ok()?,
+                password: split.skip(1).next()?,
+            }
+        )
     }
 
     fn is_part_1_valid(&self) -> bool {
@@ -37,7 +39,7 @@ impl <'a> PasswordDbEntry<'a> {
 
 pub fn solve() -> (usize, usize) {
     INPUT.lines()
-        .map(PasswordDbEntry::parse)
+        .filter_map(PasswordDbEntry::parse)
         .fold((0, 0), |(p1, p2), entry|
             (p1 + entry.is_part_1_valid() as usize, p2 + entry.is_part_2_valid() as usize)
         )
@@ -45,14 +47,14 @@ pub fn solve() -> (usize, usize) {
 
 fn solve_part_1(input: &str) -> usize {
     input.lines()
-        .map(PasswordDbEntry::parse)
+        .filter_map(PasswordDbEntry::parse)
         .filter(PasswordDbEntry::is_part_1_valid)
         .count()
 }
 
 fn solve_part_2(input: &str) -> usize {
     input.lines()
-        .map(PasswordDbEntry::parse)
+        .filter_map(PasswordDbEntry::parse)
         .filter(PasswordDbEntry::is_part_2_valid)
         .count()
 }
@@ -68,7 +70,7 @@ mod tests {
     #[test]
     fn parse_entry() {
         let first = SAMPLE_01.lines().next().unwrap();
-        let entry = PasswordDbEntry::parse(first);
+        let entry = PasswordDbEntry::parse(first).unwrap();
 
         assert_eq!(entry.low, 1);
         assert_eq!(entry.high, 3);
@@ -78,7 +80,7 @@ mod tests {
 
     #[test]
     fn part_1_sample_input() {
-        let mut entries = SAMPLE_01.lines().map(PasswordDbEntry::parse);
+        let mut entries = SAMPLE_01.lines().filter_map(PasswordDbEntry::parse);
 
         assert_eq!(entries.next().unwrap().is_part_1_valid(), true);
         assert_eq!(entries.next().unwrap().is_part_1_valid(), false);
@@ -92,7 +94,7 @@ mod tests {
 
     #[test]
     fn part_2_sample_input() {
-        let mut entries = SAMPLE_01.lines().map(PasswordDbEntry::parse);
+        let mut entries = SAMPLE_01.lines().filter_map(PasswordDbEntry::parse);
 
         assert_eq!(entries.next().unwrap().is_part_2_valid(), true);
         assert_eq!(entries.next().unwrap().is_part_2_valid(), false);
