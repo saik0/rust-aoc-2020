@@ -45,20 +45,6 @@ pub fn solve() -> (usize, usize) {
         )
 }
 
-fn solve_part_1(input: &str) -> usize {
-    input.lines()
-        .filter_map(PasswordDbEntry::parse)
-        .filter(PasswordDbEntry::is_part_1_valid)
-        .count()
-}
-
-fn solve_part_2(input: &str) -> usize {
-    input.lines()
-        .filter_map(PasswordDbEntry::parse)
-        .filter(PasswordDbEntry::is_part_2_valid)
-        .count()
-}
-
 // ============================================================================================== //
 
 #[cfg(test)]
@@ -66,6 +52,20 @@ mod tests {
     use crate::*;
 
     const SAMPLE_01: &'static str = include_str!("../sample01");
+
+    fn solve_part_1(input: &str) -> usize {
+        input.lines()
+            .filter_map(PasswordDbEntry::parse)
+            .filter(PasswordDbEntry::is_part_1_valid)
+            .count()
+    }
+
+    fn solve_part_2(input: &str) -> usize {
+        input.lines()
+            .filter_map(PasswordDbEntry::parse)
+            .filter(PasswordDbEntry::is_part_2_valid)
+            .count()
+    }
 
     #[test]
     fn parse_entry() {
@@ -111,6 +111,7 @@ mod tests {
         extern crate test;
 
         use crate::*;
+        use crate::tests::*;
         use test::Bencher;
 
         #[bench]
