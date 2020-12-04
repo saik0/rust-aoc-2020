@@ -3,6 +3,7 @@
 use day01;
 use day02;
 use day03;
+use day04;
 use std::fmt::Display;
 
 fn solve_day<A, B, S>(day: usize, solver: S) where
@@ -18,6 +19,7 @@ fn main() {
     solve_day(01, day01::solve);
     solve_day(02, day02::solve);
     solve_day(03, day03::solve);
+    solve_day(04, day04::solve);
 }
 
 #[cfg(all(feature = "unstable", test))]
@@ -49,11 +51,19 @@ mod bench {
     }
 
     #[bench]
+    fn d04(b: &mut Bencher) {
+        b.iter(|| {
+            day04::solve();
+        });
+    }
+
+    #[bench]
     fn all_days(b: &mut Bencher) {
         b.iter(|| {
             day01::solve();
             day02::solve();
             day03::solve();
+            day04::solve();
         });
     }
 }
