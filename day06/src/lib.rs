@@ -26,14 +26,12 @@ mod tests {
 
     #[test]
     fn part_2_sample_input() {
-        let actual = solve_part_2(SAMPLE_01);
-        assert_eq!(actual, 2);
+        assert_eq!(0, 1);
     }
 
     #[test]
     fn part_2_puzzle_input() {
-        let actual = solve_part_2(INPUT);
-        assert_eq!(actual, 172);
+        assert_eq!(0, 1);
     }
 
     #[cfg(all(feature = "unstable", test))]
@@ -44,7 +42,7 @@ mod tests {
         use test::Bencher;
 
         #[bench]
-        fn d03p1_brute_force(b: &mut Bencher) {
+        fn d06(b: &mut Bencher) {
             b.iter(|| {
 
             });
